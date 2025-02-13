@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подключить Phantom Wallet</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <button id="connectWallet">Подключить Phantom Wallet</button>
+
+    <script>
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            // Проверяем, доступен ли Phantom Wallet
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    // Запрашиваем подключение кошелька
+                    const response = await window.solana.connect();
+                    console.log('Кошелек подключен:', response.publicKey.toString());
+                    alert('Кошелек успешно подключен: ' + response.publicKey.toString());
+                } catch (err) {
+                    console.error('Ошибка подключения:', err);
+                    alert('Ошибка подключения кошелька: ' + err.message);
+                }
+            } else {
+                // Если Phantom Wallet не обнаружен
+                alert('Phantom Wallet не обнаружен. Убедитесь, что расширение установлено и активно.');
+                window.open('https://phantom.app/', '_blank');
+            }
+        });
+
+        // Дополнительная проверка при загрузке страницы
+        window.addEventListener('load', () => {
+            if (window.solana && window.solana.isPhantom) {
+                console.log('Phantom Wallet обнаружен.');
+            } else {
+                console.warn('Phantom Wallet не обнаружен.');
+            }
+        });
+    </script>
+</body>
+</html>
